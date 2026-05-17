@@ -1,6 +1,8 @@
-// REGISTER PAGE
+import { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
 
 function Register() {
+
 
   const navigate = useNavigate();
 
@@ -15,23 +17,12 @@ function Register() {
 
   const registerUser = () => {
 
-    if (
-      username.trim() === "" ||
-      email.trim() === "" ||
-      password.trim() === ""
-    ) {
 
-      alert("Please Fill All Fields");
-      return;
-
-    }
 
     const userData = {
-
-      username: username.trim(),
-      email: email.trim(),
-      password: password.trim(),
-
+      username,
+      email,
+      password,
     };
 
     localStorage.setItem(
@@ -39,7 +30,7 @@ function Register() {
       JSON.stringify(userData)
     );
 
-    console.log("Saved User:", userData);
+
 
     alert("Registration Successful");
 
@@ -63,7 +54,7 @@ function Register() {
           type="text"
           placeholder="Username"
           className="w-full border p-4 rounded-xl mb-5"
-          value={username}
+
           onChange={(e) =>
             setUsername(e.target.value)
           }
@@ -73,7 +64,7 @@ function Register() {
           type="email"
           placeholder="Email"
           className="w-full border p-4 rounded-xl mb-5"
-          value={email}
+
           onChange={(e) =>
             setEmail(e.target.value)
           }
@@ -83,7 +74,7 @@ function Register() {
           type="password"
           placeholder="Password"
           className="w-full border p-4 rounded-xl mb-5"
-          value={password}
+
           onChange={(e) =>
             setPassword(e.target.value)
           }
@@ -118,4 +109,7 @@ function Register() {
     </div>
 
   );
+
 }
+
+export default Register;

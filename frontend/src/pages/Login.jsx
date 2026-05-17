@@ -1,4 +1,5 @@
-// LOGIN PAGE
+import { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
 
 function Login() {
 
@@ -12,8 +13,9 @@ function Login() {
 
   const loginUser = () => {
 
-    const storedUser =
-      localStorage.getItem("user");
+    const storedUser = JSON.parse(
+      localStorage.getItem("user")
+    );
 
     if (!storedUser) {
 
@@ -22,15 +24,11 @@ function Login() {
 
     }
 
-    const user = JSON.parse(storedUser);
-
-    console.log("Stored User:", user);
+    
 
     if (
-
-      username.trim() === user.username &&
-      password.trim() === user.password
-
+      username.trim() === storedUser.username &&
+      password.trim() === storedUser.password
     ) {
 
       alert("Login Successful");
@@ -61,7 +59,7 @@ function Login() {
           type="text"
           placeholder="Username"
           className="w-full border p-4 rounded-xl mb-5"
-          value={username}
+
           onChange={(e) =>
             setUsername(e.target.value)
           }
@@ -71,7 +69,7 @@ function Login() {
           type="password"
           placeholder="Password"
           className="w-full border p-4 rounded-xl mb-5"
-          value={password}
+
           onChange={(e) =>
             setPassword(e.target.value)
           }
@@ -106,4 +104,8 @@ function Login() {
     </div>
 
   );
+
 }
+
+
+export default Login;
