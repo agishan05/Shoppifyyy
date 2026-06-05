@@ -2,20 +2,14 @@ import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 
 function Login() {
-
+  
   const navigate = useNavigate();
 
-  const [username, setUsername] =
-    useState("");
-
-  const [password, setPassword] =
-    useState("");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
 
   const loginUser = () => {
-
-    const storedUser = JSON.parse(
-      localStorage.getItem("user")
-    );
+    const storedUser = JSON.parse(localStorage.getItem("user"));
 
     if (!storedUser) {
 
@@ -24,7 +18,6 @@ function Login() {
 
     }
 
-    
 
     if (
       username.trim() === storedUser.username &&
@@ -33,15 +26,28 @@ function Login() {
 
       alert("Login Successful");
 
-      navigate("/");
+      // ✅ SAVE AUTH STATE
+      localStorage.setItem("isLoggedIn", "true");
+      localStorage.setItem("user", JSON.stringify(storedUser));
+
+      // 🔥 redirect after login
+      const redirect =
+        localStorage.getItem("redirectAfterLogin") || "/";
+
+      localStorage.removeItem("redirectAfterLogin");
+
+      // ⚡ IMPORTANT FIX: force UI update
+      window.location.href = redirect;
 
     } else {
+
 
       alert("Invalid Username or Password");
 
     }
 
   };
+
 
   return (
 
@@ -55,26 +61,23 @@ function Login() {
 
         </h1>
 
+        {/* Username */}
         <input
           type="text"
           placeholder="Username"
           className="w-full border p-4 rounded-xl mb-5"
-
-          onChange={(e) =>
-            setUsername(e.target.value)
-          }
+          onChange={(e) => setUsername(e.target.value)}
         />
 
+        {/* Password */}
         <input
           type="password"
           placeholder="Password"
           className="w-full border p-4 rounded-xl mb-5"
-
-          onChange={(e) =>
-            setPassword(e.target.value)
-          }
+          onChange={(e) => setPassword(e.target.value)}
         />
 
+        {/* Login Button */}
         <button
           onClick={loginUser}
           className="w-full bg-black text-white py-4 rounded-xl text-xl cursor-pointer"
@@ -84,15 +87,12 @@ function Login() {
 
         </button>
 
+        {/* Register Link */}
+
         <p className="text-center mt-5">
 
           Don't have account?
-
-          <Link
-            to="/register"
-            className="text-blue-500 ml-2"
-          >
-
+          <Link to="/register" className="text-blue-500 ml-2">
             Register
 
           </Link>
@@ -102,6 +102,7 @@ function Login() {
       </div>
 
     </div>
+
 
   );
 

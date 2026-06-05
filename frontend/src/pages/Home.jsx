@@ -277,79 +277,9 @@ function Home() {
   );
 
   return (
+
     <div className="bg-gray-100 min-h-screen">
-
-      {/* NAVBAR */}
-      <nav className="bg-black text-white sticky top-0 z-50 shadow-lg">
-
-        <div className="max-w-7xl mx-auto px-5 py-4 flex justify-between items-center">
-
-          {/* LEFT */}
-          <div className="flex items-center gap-3">
-
-            <div className="bg-yellow-400 text-black w-12 h-12 rounded-full flex justify-center items-center text-2xl">
-
-              🛍️
-
-            </div>
-
-            <h1 className="text-3xl font-bold text-yellow-400">
-              Shoppifyy
-            </h1>
-
-          </div>
-
-          {/* RIGHT */}
-          <div className="flex gap-6 items-center text-lg">
-
-            <a
-              href="#home"
-              className="hover:text-yellow-400 cursor-pointer"
-            >
-              Home
-            </a>
-
-            <a
-              href="#about"
-              className="hover:text-yellow-400 cursor-pointer"
-            >
-              About
-            </a>
-
-            <a
-              href="#contact"
-              className="hover:text-yellow-400 cursor-pointer"
-            >
-              Contact
-            </a>
-
-            <a
-              href="#cart"
-              className="hover:text-yellow-400 cursor-pointer flex items-center gap-2"
-            >
-
-              🛒 Cart
-
-              <span className="bg-yellow-400 text-black px-2 py-1 rounded-full text-sm font-bold">
-
-                {cart.length}
-
-              </span>
-
-            </a>
-
-            <Link
-              to="/login"
-              className="hover:text-yellow-400 cursor-pointer"
-            >
-              Login
-            </Link>
-
-          </div>
-
-        </div>
-
-      </nav>
+      
 
       {/* HERO */}
       <section
