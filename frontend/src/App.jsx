@@ -39,6 +39,39 @@ function App() {
     localStorage.setItem('cart', JSON.stringify(cart));
   }, [cart]);
 
+  // Process a pending add-to-cart action when the user logs in
+  useEffect(() => {
+    const handler = () => {
+      const pending = localStorage.getItem('pendingAdd');
+      if (!pending) return;
+      try {
+        const { product, quantity } = JSON.parse(pending);
+        setCart((currentCart) => {
+          const existing = currentCart.find((item) => item.id === product.id);
+          if (existing) {
+            return currentCart.map((item) =>
+              item.id === product.id ? { ...item, quantity: item.quantity + quantity } : item
+            );
+          }
+          return [...currentCart, { ...product, quantity }];
+        });
+        localStorage.removeItem('pendingAdd');
+        setToast({ show: true, message: `${product.name} added to cart` });
+      } catch (e) {
+        // ignore
+      }
+    };
+
+    window.addEventListener('process-pending-add', handler);
+
+    // If already logged in and a pending exists, process immediately
+    if (localStorage.getItem('isLoggedIn') === 'true' && localStorage.getItem('pendingAdd')) {
+      handler();
+    }
+
+    return () => window.removeEventListener('process-pending-add', handler);
+  }, []);
+
   useEffect(() => {
     localStorage.setItem('wishlist', JSON.stringify(wishlist));
   }, [wishlist]);
@@ -55,6 +88,15 @@ function App() {
   }, [toast.show]);
 
   const addToCart = (product, quantity = 1) => {
+    const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+    if (!isLoggedIn) {
+      // Save pending action and redirect to login
+      localStorage.setItem('pendingAdd', JSON.stringify({ product, quantity }));
+      localStorage.setItem('redirectAfterLogin', window.location.pathname || '/');
+      window.location.href = '/login';
+      return;
+    }
+
     setCart((currentCart) => {
       const existing = currentCart.find((item) => item.id === product.id);
       if (existing) {

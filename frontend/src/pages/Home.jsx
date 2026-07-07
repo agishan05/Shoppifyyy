@@ -89,7 +89,7 @@ function Home({ products, cart, wishlist, loading, addToCart, updateQuantity, re
               <div className="grid grid-cols-2 gap-3">
                 {products.slice(0, 6).map((product, index) => (
                   <div key={product.id} className={`group relative overflow-hidden rounded-[1.2rem] ${index === 0 ? 'col-span-2' : ''}`}>
-                    <div className="aspect-square overflow-hidden rounded-[1.2rem]">
+                    <div className="h-36 overflow-hidden rounded-[1.2rem]">
                       <img src={product.image} alt={product.name} className="h-full w-full object-cover transition duration-500 group-hover:scale-105" />
                     </div>
                     <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent" />
@@ -187,7 +187,7 @@ function Home({ products, cart, wishlist, loading, addToCart, updateQuantity, re
             <p className="mt-3 text-gray-600">Try a broader keyword or reset the filters.</p>
           </div>
         ) : (
-          <div className="mt-8 grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
+          <div className="mt-8 grid items-start gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
             {filteredProducts.map((product) => (
               <ProductCard
                 key={product.id}

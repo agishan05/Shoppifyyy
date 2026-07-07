@@ -66,8 +66,9 @@ function Navbar({ cartCount = 0 }) {
           </Link>
           {isLoggedIn ? (
             <div className="relative">
-              <button type="button" onClick={() => setShowMenu((value) => !value)} className="flex h-10 w-10 items-center justify-center rounded-full bg-yellow-400 font-semibold text-black">
-                {user?.username?.charAt(0).toUpperCase() || 'U'}
+              <button type="button" onClick={() => setShowMenu((value) => !value)} className="flex items-center gap-2 rounded-full bg-yellow-400 px-3 py-1 font-semibold text-black">
+                <span className="flex h-8 w-8 items-center justify-center rounded-full bg-white text-sm text-gray-800">{user?.username?.charAt(0).toUpperCase() || (user?.email?.charAt(0) || 'U').toUpperCase()}</span>
+                <span className="hidden sm:inline">{user?.username || user?.email || 'User'}</span>
               </button>
               {showMenu && (
                 <div className="absolute right-0 top-12 w-48 rounded-2xl border border-gray-200 bg-white p-2 shadow-xl">

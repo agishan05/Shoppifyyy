@@ -13,12 +13,17 @@ function Login() {
       window.alert('Please register first.');
       return;
     }
+    const matchUser = username.trim() === storedUser.username || username.trim() === storedUser.email;
 
-    if (username.trim() === storedUser.username && password.trim() === storedUser.password) {
+    if (matchUser && password.trim() === storedUser.password) {
       localStorage.setItem('isLoggedIn', 'true');
       localStorage.setItem('user', JSON.stringify(storedUser));
       const redirect = localStorage.getItem('redirectAfterLogin') || '/';
       localStorage.removeItem('redirectAfterLogin');
+      // If there is a pending add-to-cart action, notify the app to process it
+      if (localStorage.getItem('pendingAdd')) {
+        window.dispatchEvent(new Event('process-pending-add'));
+      }
       navigate(redirect);
     } else {
       window.alert('Invalid username or password.');
@@ -34,8 +39,8 @@ function Login() {
 
         <div className="mt-6 space-y-4">
           <label className="block text-sm text-gray-700">
-            <span className="mb-2 block">Username</span>
-            <input type="text" value={username} onChange={(event) => setUsername(event.target.value)} placeholder="Enter username" className="w-full rounded-full border border-gray-200 px-4 py-3" />
+            <span className="mb-2 block">Username or email</span>
+            <input type="text" value={username} onChange={(event) => setUsername(event.target.value)} placeholder="Enter username or email" className="w-full rounded-full border border-gray-200 px-4 py-3" />
           </label>
           <label className="block text-sm text-gray-700">
             <span className="mb-2 block">Password</span>

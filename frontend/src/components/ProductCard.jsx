@@ -8,7 +8,7 @@ function ProductCard({ product, onAddToCart, onToggleWishlist, isWishlisted, hig
           src={product.image}
           alt={product.name}
           loading="lazy"
-          className="h-56 w-full object-cover transition duration-500 group-hover:scale-105"
+          className="h-44 w-full object-cover transition duration-500 group-hover:scale-105"
         />
         <span className="absolute left-4 top-4 rounded-full bg-yellow-400 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-black">
           {product.badge}
@@ -29,10 +29,10 @@ function ProductCard({ product, onAddToCart, onToggleWishlist, isWishlisted, hig
           <span className="font-medium text-amber-600">★ {product.rating}</span>
         </div>
 
-        <h3 className="text-lg font-semibold text-gray-900">
+        <h3 className="text-lg font-semibold text-gray-900 min-h-[3rem]">
           {highlightText ? highlightText(product.name) : product.name}
         </h3>
-        <p className="mt-2 flex-1 text-sm leading-6 text-gray-600">{product.description}</p>
+        <p className="mt-2 flex-1 text-sm leading-6 text-gray-600 min-h-[4rem] overflow-hidden">{product.description}</p>
 
         <div className="mt-4 flex items-center justify-between">
           <div>
