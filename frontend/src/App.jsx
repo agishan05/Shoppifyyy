@@ -90,10 +90,16 @@ function App() {
   const addToCart = (product, quantity = 1) => {
     const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
     if (!isLoggedIn) {
-      // Save pending action and redirect to login
+      // Save pending action and navigate to login using client-side history
       localStorage.setItem('pendingAdd', JSON.stringify({ product, quantity }));
       localStorage.setItem('redirectAfterLogin', window.location.pathname || '/');
-      window.location.href = '/login';
+      try {
+        window.history.pushState({}, '', '/login');
+        window.dispatchEvent(new PopStateEvent('popstate'));
+      } catch (e) {
+        // Fallback to hard navigation if history API isn't available
+        window.location.href = '/login';
+      }
       return;
     }
 
