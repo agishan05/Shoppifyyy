@@ -1,134 +1,117 @@
-import { useState, useEffect } from "react";
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { useState } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 
-function Navbar() {
+function Navbar({ cartCount = 0 }) {
   const navigate = useNavigate();
   const location = useLocation();
-
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [user, setUser] = useState({});
   const [showMenu, setShowMenu] = useState(false);
-
-  useEffect(() => {
-    const login = localStorage.getItem("isLoggedIn") === "true";
-    const userData = JSON.parse(localStorage.getItem("user") || "{}");
-
-    setIsLoggedIn(login);
-    setUser(userData);
-  }, [location.pathname]);
+  const [isLoggedIn] = useState(() => localStorage.getItem('isLoggedIn') === 'true');
+  const [user] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem('user') || '{}') || {};
+    } catch {
+      return {};
+    }
+  });
 
   const logout = () => {
-    localStorage.removeItem("isLoggedIn");
-    localStorage.removeItem("user");
-    navigate("/login");
+    localStorage.removeItem('isLoggedIn');
+    localStorage.removeItem('user');
+    navigate('/login');
   };
 
   const handleSectionClick = (sectionId) => {
-    if (location.pathname === "/") {
-      // already on home page
+    setShowMenu(false);
+    if (location.pathname === '/') {
       const section = document.getElementById(sectionId);
       if (section) {
-        section.scrollIntoView({ behavior: "smooth" });
+        section.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }
     } else {
-      // from profile/orders page
-      navigate("/");
+      navigate('/');
       setTimeout(() => {
         const section = document.getElementById(sectionId);
         if (section) {
-          section.scrollIntoView({ behavior: "smooth" });
+          section.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
-      }, 500);
+      }, 350);
     }
   };
 
+  const navLinks = [
+    { label: 'Home', action: () => { setShowMenu(false); navigate('/'); } },
+    { label: 'Shop', action: () => handleSectionClick('products') },
+    { label: 'Categories', action: () => handleSectionClick('products') },
+    { label: 'About', action: () => handleSectionClick('about') },
+    { label: 'Contact', action: () => handleSectionClick('contact') },
+  ];
+
   return (
-    <nav className="bg-white shadow-md px-10 py-4 flex justify-between items-center sticky top-0 z-50">
-      
-      {/* LEFT LOGO */}
-      <div
-        onClick={() => navigate("/")}
-        className="text-3xl font-bold text-yellow-500 cursor-pointer"
-      >
-        🛍️ Shoppifyy
-      </div>
-
-      {/* RIGHT MENU */}
-      <div className="flex items-center gap-8 text-lg font-medium">
-        <button
-          onClick={() => navigate("/")}
-          className="hover:text-yellow-500 cursor-pointer"
-        >
-          Home
+    <header className="sticky top-0 z-50 border-b border-gray-200 bg-white/90 backdrop-blur">
+      <nav className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6 lg:px-8" aria-label="Main navigation">
+        <button type="button" onClick={() => navigate('/')} className="flex items-center gap-2 text-2xl font-semibold text-gray-900">
+          <span className="rounded-full bg-yellow-400 px-3 py-1 text-lg">🛍️</span>
+          Shoppifyy
         </button>
 
-        <button
-          onClick={() => handleSectionClick("about")}
-          className="hover:text-yellow-500 cursor-pointer"
-        >
-          About
-        </button>
-
-        <button
-          onClick={() => handleSectionClick("contact")}
-          className="hover:text-yellow-500 cursor-pointer"
-        >
-          Contact
-        </button>
-
-        <button
-          onClick={() => handleSectionClick("cart")}
-          className="hover:text-yellow-500 cursor-pointer"
-        >
-          🛒 Cart
-        </button>
-
-        {!isLoggedIn ? (
-          <Link
-            to="/login"
-            className="bg-yellow-400 px-5 py-2 rounded-xl font-semibold"
-          >
-            Login
-          </Link>
-        ) : (
-          <div className="relative">
-            <button
-              onClick={() => setShowMenu(!showMenu)}
-              className="w-10 h-10 rounded-full bg-yellow-400 font-bold cursor-pointer"
-            >
-              {user?.username?.charAt(0).toUpperCase() || "U"}
+        <div className="hidden items-center gap-6 text-sm font-medium text-gray-700 lg:flex">
+          {navLinks.map((link) => (
+            <button key={link.label} type="button" onClick={link.action} className="transition hover:text-yellow-600">
+              {link.label}
             </button>
+          ))}
+          <Link to="/checkout" className="relative rounded-full p-2 transition hover:text-yellow-600" aria-label="View cart">
+            🛒
+            {cartCount > 0 && <span className="absolute -right-1 -top-1 min-w-5 rounded-full bg-yellow-400 px-1 text-center text-[0.7rem] font-semibold text-black">{cartCount}</span>}
+          </Link>
+          {isLoggedIn ? (
+            <div className="relative">
+              <button type="button" onClick={() => setShowMenu((value) => !value)} className="flex h-10 w-10 items-center justify-center rounded-full bg-yellow-400 font-semibold text-black">
+                {user?.username?.charAt(0).toUpperCase() || 'U'}
+              </button>
+              {showMenu && (
+                <div className="absolute right-0 top-12 w-48 rounded-2xl border border-gray-200 bg-white p-2 shadow-xl">
+                  <Link to="/profile" onClick={() => setShowMenu(false)} className="block rounded-xl px-4 py-3 text-sm hover:bg-gray-100">Profile</Link>
+                  <Link to="/orders" onClick={() => setShowMenu(false)} className="block rounded-xl px-4 py-3 text-sm hover:bg-gray-100">My Orders</Link>
+                  <button type="button" onClick={logout} className="block w-full rounded-xl px-4 py-3 text-left text-sm text-red-600 hover:bg-red-50">Logout</button>
+                </div>
+              )}
+            </div>
+          ) : (
+            <Link to="/login" className="rounded-full bg-yellow-400 px-4 py-2 font-semibold text-black transition hover:bg-yellow-500">Login</Link>
+          )}
+        </div>
 
-            {showMenu && (
-              <div className="absolute right-0 top-12 bg-white shadow-xl rounded-xl w-48 border z-50">
-                <Link
-                  to="/profile"
-                  className="block px-4 py-3 hover:bg-gray-100"
-                  onClick={() => setShowMenu(false)}
-                >
-                  Profile
-                </Link>
+        <div className="flex items-center gap-3 lg:hidden">
+          <Link to="/checkout" className="relative rounded-full p-2" aria-label="View cart">
+            🛒
+            {cartCount > 0 && <span className="absolute -right-1 -top-1 min-w-5 rounded-full bg-yellow-400 px-1 text-center text-[0.7rem] font-semibold text-black">{cartCount}</span>}
+          </Link>
+          <button type="button" aria-label="Toggle navigation menu" onClick={() => setShowMenu((value) => !value)} className="rounded-full border border-gray-200 p-2 text-xl">
+            ☰
+          </button>
+        </div>
+      </nav>
 
-                <Link
-                  to="/orders"
-                  className="block px-4 py-3 hover:bg-gray-100"
-                  onClick={() => setShowMenu(false)}
-                >
-                  My Orders
-                </Link>
-
-                <button
-                  onClick={logout}
-                  className="w-full text-left px-4 py-3 text-red-600 hover:bg-red-100"
-                >
-                  Logout
-                </button>
-              </div>
-            )}
-          </div>
-        )}
+      <div className={`overflow-hidden border-t border-gray-200 bg-white transition-all duration-300 lg:hidden ${showMenu ? 'max-h-80' : 'max-h-0'}`}>
+        <div className="mx-auto flex max-w-7xl flex-col gap-2 px-4 py-4">
+          {navLinks.map((link) => (
+            <button key={link.label} type="button" onClick={link.action} className="rounded-2xl px-3 py-3 text-left text-sm font-medium text-gray-700 transition hover:bg-gray-100">
+              {link.label}
+            </button>
+          ))}
+          {isLoggedIn ? (
+            <>
+              <Link to="/profile" onClick={() => setShowMenu(false)} className="rounded-2xl px-3 py-3 text-left text-sm font-medium text-gray-700 transition hover:bg-gray-100">Profile</Link>
+              <Link to="/orders" onClick={() => setShowMenu(false)} className="rounded-2xl px-3 py-3 text-left text-sm font-medium text-gray-700 transition hover:bg-gray-100">My Orders</Link>
+              <button type="button" onClick={logout} className="rounded-2xl px-3 py-3 text-left text-sm font-medium text-red-600 transition hover:bg-red-50">Logout</button>
+            </>
+          ) : (
+            <Link to="/login" onClick={() => setShowMenu(false)} className="rounded-2xl bg-yellow-400 px-3 py-3 text-left text-sm font-semibold text-black">Login</Link>
+          )}
+        </div>
       </div>
-    </nav>
+    </header>
   );
 }
 
