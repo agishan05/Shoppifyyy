@@ -42,6 +42,11 @@ textarea {
   font: inherit;
 }
 
+/* Make interactive/touchable elements show pointer cursor */
+:is(button:not([disabled]), a, [role="button"], input[type="button"], input[type="submit"], label[role="button"], .clickable) {
+  cursor: pointer !important;
+}
+
 :focus-visible {
   outline: 3px solid rgba(250, 204, 21, 0.85);
   outline-offset: 2px;
