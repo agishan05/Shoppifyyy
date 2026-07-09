@@ -187,16 +187,17 @@ function Home({ products, cart, wishlist, loading, addToCart, updateQuantity, re
             <p className="mt-3 text-gray-600">Try a broader keyword or reset the filters.</p>
           </div>
         ) : (
-          <div className="mt-8 grid items-start gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
+          <div className="mt-8 grid items-stretch gap-4 grid-cols-2 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
             {filteredProducts.map((product) => (
-              <ProductCard
-                key={product.id}
-                product={product}
-                onAddToCart={addToCart}
-                onToggleWishlist={toggleWishlist}
-                isWishlisted={wishlist.some((item) => item.id === product.id)}
-                highlightText={highlightText}
-              />
+              <div key={product.id} className="h-full">
+                <ProductCard
+                  product={product}
+                  onAddToCart={addToCart}
+                  onToggleWishlist={toggleWishlist}
+                  isWishlisted={wishlist.some((item) => item.id === product.id)}
+                  highlightText={highlightText}
+                />
+              </div>
             ))}
           </div>
         )}

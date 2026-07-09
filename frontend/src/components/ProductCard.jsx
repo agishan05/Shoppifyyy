@@ -2,15 +2,14 @@ import { Link } from 'react-router-dom';
 
 function ProductCard({ product, onAddToCart, onToggleWishlist, isWishlisted, highlightText }) {
   return (
-    <article className="group flex h-[520px] flex-col overflow-hidden rounded-[1.5rem] border border-black/5 bg-white shadow-[0_12px_30px_rgba(0,0,0,0.08)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_20px_40px_rgba(0,0,0,0.14)]">
-      
+    <article className="group flex h-full w-full flex-col overflow-hidden rounded-[1.5rem] border border-black/5 bg-white shadow-[0_12px_30px_rgba(0,0,0,0.08)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_20px_40px_rgba(0,0,0,0.14)]">
       {/* Product Image */}
-      <div className="relative overflow-hidden">
+      <div className="relative h-48 w-full shrink-0 overflow-hidden sm:h-52">
         <img
           src={product.image}
           alt={product.name}
           loading="lazy"
-          className="h-44 w-full object-cover transition duration-500 group-hover:scale-105"
+          className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
         />
 
         <span className="absolute left-4 top-4 rounded-full bg-yellow-400 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-black">
@@ -36,10 +35,9 @@ function ProductCard({ product, onAddToCart, onToggleWishlist, isWishlisted, hig
       </div>
 
       {/* Product Details */}
-      <div className="flex flex-1 flex-col p-5">
-
+      <div className="flex flex-1 flex-col justify-between p-4 sm:p-5">
         {/* Category & Rating */}
-        <div className="mb-3 flex items-center justify-between gap-3 text-sm text-gray-500">
+        <div className="mb-2 flex items-center justify-between gap-2 text-sm text-gray-500">
           <span className="rounded-full bg-gray-100 px-2.5 py-1">
             {product.category}
           </span>
@@ -50,24 +48,24 @@ function ProductCard({ product, onAddToCart, onToggleWishlist, isWishlisted, hig
         </div>
 
         {/* Product Name */}
-        <h3 className="min-h-[56px] text-lg font-semibold text-gray-900">
+        <h3 className="min-h-[58px] text-base font-semibold leading-6 text-gray-900 sm:text-lg">
           {highlightText ? highlightText(product.name) : product.name}
         </h3>
 
         {/* Description */}
         <p
-          className="mt-2 text-sm leading-6 text-gray-600 overflow-hidden"
+          className="mt-2 h-[60px] overflow-hidden text-sm leading-5 text-gray-600"
           style={{
-            display: "-webkit-box",
+            display: '-webkit-box',
             WebkitLineClamp: 3,
-            WebkitBoxOrient: "vertical",
+            WebkitBoxOrient: 'vertical',
           }}
         >
           {product.description}
         </p>
 
         {/* Price */}
-        <div className="mt-4 flex items-center justify-between">
+        <div className="mt-4 flex min-h-[64px] items-center justify-between gap-2">
           <div>
             <p className="text-lg font-bold text-gray-900">
               ₹{product.price.toLocaleString()}
@@ -84,7 +82,7 @@ function ProductCard({ product, onAddToCart, onToggleWishlist, isWishlisted, hig
         </div>
 
         {/* Buttons */}
-        <div className="mt-auto pt-5 flex flex-col gap-2 sm:flex-row">
+        <div className="mt-4 flex flex-col gap-2 pt-2 sm:mt-auto sm:flex-row sm:pt-4">
           <button
             type="button"
             onClick={() => onAddToCart(product)}
@@ -100,7 +98,6 @@ function ProductCard({ product, onAddToCart, onToggleWishlist, isWishlisted, hig
             Quick View
           </Link>
         </div>
-
       </div>
     </article>
   );

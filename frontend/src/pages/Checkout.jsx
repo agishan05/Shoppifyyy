@@ -44,7 +44,7 @@ function Checkout({ cart, clearCart }) {
 
     setIsSubmitting(true);
     const user = JSON.parse(localStorage.getItem('user') || '{}');
-    const username = user?.username;
+    const username = user?.username || 'guest';
     const order = {
       id: `ORD-${Date.now()}`,
       ...form,
@@ -63,29 +63,47 @@ function Checkout({ cart, clearCart }) {
     clearCart();
   };
 
-  if (!cart.length) {
+  const goToOrders = () => {
+    setShowSuccess(false);
+    navigate('/orders');
+  };
+
+  const closeSuccess = () => {
+    setShowSuccess(false);
+  };
+
+  if (!cart.length && !showSuccess) {
     return (
-      <main className="min-h-screen bg-gray-50 px-4 py-16 sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-3xl rounded-[2rem] bg-white p-8 text-center shadow-sm">
-          <h1 className="text-3xl font-semibold text-gray-900">Your cart is empty</h1>
-          <p className="mt-3 text-gray-600">Add a few items before placing your order.</p>
-          <button type="button" onClick={() => navigate('/')} className="mt-6 rounded-full bg-yellow-400 px-5 py-3 font-semibold text-black">Continue shopping</button>
+      <main className="min-h-screen bg-gray-50 px-3 py-12 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-3xl rounded-[1.75rem] bg-white p-6 text-center shadow-sm sm:p-8">
+          <h1 className="text-2xl font-semibold text-gray-900 sm:text-3xl">Your cart is empty</h1>
+          <p className="mt-3 text-sm text-gray-600 sm:text-base">Add a few items before placing your order.</p>
+          <button type="button" onClick={() => navigate('/')} className="mt-6 rounded-full bg-yellow-400 px-5 py-3 font-semibold text-black transition hover:bg-yellow-500">
+            Continue shopping
+          </button>
         </div>
       </main>
     );
   }
 
   return (
-    <main className="min-h-screen bg-gray-50 px-4 py-10 sm:px-6 lg:px-8">
-      <div className="mx-auto grid max-w-7xl gap-6 lg:grid-cols-[1.1fr_0.9fr]">
-        <form onSubmit={placeOrder} className="space-y-6 rounded-[2rem] bg-white p-6 shadow-sm sm:p-8">
-          <div>
-            <p className="text-sm font-semibold uppercase tracking-[0.35em] text-yellow-600">Checkout</p>
-            <h1 className="mt-2 text-3xl font-semibold text-gray-900">Complete your order</h1>
+    <main className="min-h-screen bg-gradient-to-b from-gray-50 to-white px-3 py-5 sm:px-4 sm:py-8 lg:px-8 lg:py-10">
+      <div className="mx-auto flex max-w-7xl flex-col gap-4 lg:grid lg:grid-cols-[1.1fr_0.9fr] lg:gap-6">
+        <form onSubmit={placeOrder} className="order-2 space-y-4 rounded-[1.5rem] bg-white p-4 shadow-sm ring-1 ring-gray-100 sm:space-y-6 sm:rounded-[2rem] sm:p-6 lg:order-1 lg:p-8">
+          <div className="space-y-1">
+            <p className="text-xs font-semibold uppercase tracking-[0.35em] text-yellow-600 sm:text-sm">Checkout</p>
+            <h1 className="text-2xl font-semibold text-gray-900 sm:text-3xl">Complete your order</h1>
           </div>
 
-          <section className="rounded-[1.5rem] border border-gray-200 p-5">
-            <h2 className="text-lg font-semibold text-gray-900">Customer information</h2>
+          {showSuccess && (
+            <div className="rounded-2xl border border-green-200 bg-green-50 p-4 text-sm text-green-700">
+              <p className="font-semibold">Order placed successfully.</p>
+              <p className="mt-1">Your order number is <span className="font-semibold text-green-800">{orderNumber}</span>.</p>
+            </div>
+          )}
+
+          <section className="rounded-[1.25rem] border border-gray-200 p-4 sm:rounded-[1.5rem] sm:p-5">
+            <h2 className="text-base font-semibold text-gray-900 sm:text-lg">Customer information</h2>
             <div className="mt-4 grid gap-4 sm:grid-cols-2">
               <label className="text-sm text-gray-700">
                 <span className="mb-2 block">Full name</span>
@@ -97,13 +115,13 @@ function Checkout({ cart, clearCart }) {
               </label>
               <label className="text-sm text-gray-700 sm:col-span-2">
                 <span className="mb-2 block">Phone</span>
-                <input name="phone" value={form.phone} onChange={handleChange} className="w-full rounded-full border border-gray-200 px-4 py-3" required />
+                <input type="tel" inputMode="tel" name="phone" value={form.phone} onChange={handleChange} className="w-full rounded-full border border-gray-200 px-4 py-3" required />
               </label>
             </div>
           </section>
 
-          <section className="rounded-[1.5rem] border border-gray-200 p-5">
-            <h2 className="text-lg font-semibold text-gray-900">Shipping address</h2>
+          <section className="rounded-[1.25rem] border border-gray-200 p-4 sm:rounded-[1.5rem] sm:p-5">
+            <h2 className="text-base font-semibold text-gray-900 sm:text-lg">Shipping address</h2>
             <div className="mt-4 grid gap-4 sm:grid-cols-2">
               <label className="text-sm text-gray-700">
                 <span className="mb-2 block">Country</span>
@@ -119,7 +137,7 @@ function Checkout({ cart, clearCart }) {
               </label>
               <label className="text-sm text-gray-700">
                 <span className="mb-2 block">ZIP code</span>
-                <input name="zip" value={form.zip} onChange={handleChange} className="w-full rounded-full border border-gray-200 px-4 py-3" required />
+                <input inputMode="numeric" name="zip" value={form.zip} onChange={handleChange} className="w-full rounded-full border border-gray-200 px-4 py-3" required />
               </label>
               <label className="text-sm text-gray-700 sm:col-span-2">
                 <span className="mb-2 block">Full address</span>
@@ -128,11 +146,16 @@ function Checkout({ cart, clearCart }) {
             </div>
           </section>
 
-          <section className="rounded-[1.5rem] border border-gray-200 p-5">
-            <h2 className="text-lg font-semibold text-gray-900">Payment method</h2>
+          <section className="rounded-[1.25rem] border border-gray-200 p-4 sm:rounded-[1.5rem] sm:p-5">
+            <h2 className="text-base font-semibold text-gray-900 sm:text-lg">Payment method</h2>
             <div className="mt-4 grid gap-3 sm:grid-cols-3">
               {['card', 'upi', 'cod'].map((method) => (
-                <button key={method} type="button" onClick={() => setPaymentMethod(method)} className={`rounded-2xl border px-4 py-3 text-sm font-medium transition ${paymentMethod === method ? 'border-yellow-400 bg-yellow-50 text-yellow-700' : 'border-gray-200 text-gray-700'}`}>
+                <button
+                  key={method}
+                  type="button"
+                  onClick={() => setPaymentMethod(method)}
+                  className={`rounded-2xl border px-4 py-3 text-sm font-medium transition ${paymentMethod === method ? 'border-yellow-400 bg-yellow-50 text-yellow-700' : 'border-gray-200 text-gray-700'}`}
+                >
                   {method === 'card' ? 'Credit card' : method === 'upi' ? 'UPI' : 'Cash on delivery'}
                 </button>
               ))}
@@ -144,8 +167,8 @@ function Checkout({ cart, clearCart }) {
           </button>
         </form>
 
-        <aside className="rounded-[2rem] bg-gray-900 p-6 text-white shadow-sm sm:p-8">
-          <h2 className="text-xl font-semibold">Order summary</h2>
+        <aside className="order-1 rounded-[1.5rem] bg-gray-900 p-4 text-white shadow-sm sm:p-6 lg:order-2 lg:sticky lg:top-4 lg:h-fit lg:p-8">
+          <h2 className="text-lg font-semibold sm:text-xl">Order summary</h2>
           <div className="mt-5 space-y-3 text-sm text-gray-300">
             {cart.map((item) => (
               <div key={item.id} className="flex items-center justify-between rounded-2xl bg-white/10 px-4 py-3">
@@ -164,12 +187,16 @@ function Checkout({ cart, clearCart }) {
       </div>
 
       {showSuccess && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4">
-          <div className="w-full max-w-md rounded-[2rem] bg-white p-8 text-center shadow-2xl">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-3 py-4 sm:px-4">
+          <div className="w-full max-w-md rounded-[1.75rem] bg-white p-6 text-center shadow-2xl sm:p-8">
             <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-green-100 text-3xl">✓</div>
-            <h2 className="mt-4 text-3xl font-semibold text-gray-900">Order placed successfully</h2>
-            <p className="mt-3 text-gray-600">Your order number is <span className="font-semibold text-gray-900">{orderNumber}</span>.</p>
-            <button type="button" onClick={() => navigate('/')} className="mt-6 rounded-full bg-yellow-400 px-5 py-3 font-semibold text-black">Continue shopping</button>
+            <h2 className="mt-4 text-2xl font-semibold text-gray-900 sm:text-3xl">Order placed successfully</h2>
+            <p className="mt-3 text-sm text-gray-600 sm:text-base">Your order number is <span className="font-semibold text-gray-900">{orderNumber}</span>.</p>
+            <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-center">
+              <button type="button" onClick={goToOrders} className="rounded-full bg-gray-900 px-5 py-3 font-semibold text-white">View orders</button>
+              <button type="button" onClick={() => navigate('/')} className="rounded-full bg-yellow-400 px-5 py-3 font-semibold text-black">Continue shopping</button>
+            </div>
+            <button type="button" onClick={closeSuccess} className="mt-4 text-sm font-medium text-gray-500">Close</button>
           </div>
         </div>
       )}
